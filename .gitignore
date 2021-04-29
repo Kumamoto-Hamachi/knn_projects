@@ -2,3 +2,4 @@
 exec.sh
 *.pickle
 memo.txt
+__pycache__
