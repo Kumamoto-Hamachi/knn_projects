@@ -48,6 +48,19 @@ def optimize(X, y, flg_calc=False):
     return opt_k
 
 
+def let_knn_learn(k, X, y, flg_learned=True):
+    filename = "pickles/knn.pickle"
+    if flg_learned:
+        print("loading")  # debug
+        knn = pickle.load(open(filename, "rb"))
+    else:
+        knn = KNeighborsClassifier(n_neighbors=k)
+        knn.fit(X, y)
+        pickle.dump(knn, open(filename, "wb"))
+    return knn
+
+
+
 if __name__ == "__main__":
     X, y = load_mnist()
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=60000, shuffle=False)  # the mnist dataset have already shuffled
@@ -58,3 +71,6 @@ if __name__ == "__main__":
     #print("scores", scores)  # debug
     opt_k = optimize(X_train, y_train)
     print("opt_k", opt_k)  # debug
+    knn = let_knn_learn(opt_k, X_train, y_train)
+    score = knn.score(X_test, y_test)
+    print("score", score)  # debug
