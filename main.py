@@ -4,6 +4,7 @@ from sklearn.datasets import fetch_openml
 import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+import os
 
 from util.util import argmax_for_dict
 
@@ -14,15 +15,17 @@ goal:
 """
 
 
-def load_mnist(flg_fetch=False):
+def load_mnist():
     fname = "pickles/mnist.pickle"
-    if flg_fetch:
+    if os.path.exists(fname):
+        print(f"{fname} exists")  # debug
+        with open(fname, "rb") as f:
+            X, y = pickle.load(f)
+    else:
+        print(f"{fname} doesn't exist")  # debug
         X, y = fetch_openml("mnist_784", version=1, return_X_y=True)
         with open(fname, "wb") as f:
             pickle.dump((X, y), f)
-    else:
-        with open(fname, "rb") as f:
-            X, y = pickle.load(f)
     print("len(X), len(y)", len(X), len(y))  # debug
     return X, y
 
@@ -39,24 +42,29 @@ def experiment_knn_score(X, y):
     return scores
 
 
-def optimize(X, y, flg_calc=False):
-    if flg_calc:
-        scores = experiment_knn_score(X, y)
+def optimize(X, y):
+    fname = "pickles/scores.pickle"
+    if os.path.exists(fname):
+        print(f"{fname} exists")  # debug
+        scores = pickle.load(open(fname, "rb"))
     else:
-        scores = pickle.load(open("pickles/scores.pickle", "rb"))
+        print(f"{fname} doesn't exist")  # debug
+        scores = experiment_knn_score(X, y)
     opt_k, max_score = argmax_for_dict(scores)
+    print("opt_k", opt_k)  # debug
     return opt_k
 
 
-def let_knn_learn(k, X, y, flg_learned=True):
-    filename = "pickles/knn.pickle"
-    if flg_learned:
-        print("loading")  # debug
-        knn = pickle.load(open(filename, "rb"))
+def learn_knn(X, y, k):
+    fname = "pickles/knn.pickle"
+    if os.path.exists(fname):
+        print(f"{fname} exists")  # debug
+        knn = pickle.load(open(fname, "rb"))
     else:
+        print(f"{fname} doesn't exist")  # debug
         knn = KNeighborsClassifier(n_neighbors=k)
         knn.fit(X, y)
-        pickle.dump(knn, open(filename, "wb"))
+        pickle.dump(knn, open(fname, "wb"))
     return knn
 
 
@@ -70,7 +78,6 @@ if __name__ == "__main__":
     #scores = pickle.load(open("pickles/scores.pickle", "rb"))
     #print("scores", scores)  # debug
     opt_k = optimize(X_train, y_train)
-    print("opt_k", opt_k)  # debug
-    knn = let_knn_learn(opt_k, X_train, y_train)
+    knn = learn_knn(X_train, y_train, opt_k)
     score = knn.score(X_test, y_test)
     print("score", score)  # debug
