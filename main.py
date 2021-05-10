@@ -1,82 +1,57 @@
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-
 from mnist import load_mnist
-from knn import learn_knn
-from util.simple_watch import watch_as_str as w
-import os
+from knn import learn_knn, knn_predict
 import pickle
-from matplotlib.colors import LinearSegmentedColormap
+import os
 import matplotlib.pyplot as plt
 
-OPT_K = 3  # this num is calced by knn.py
-
-color_dict = {
-     'red':   [
-         (0.0,  1.0, 1.0),
-         (0.01,  0.9, 0.9),
-         (0.02,  1.0, 1.0),
-         (0.5,  1.0, 1.0),
-         (1.0,  0.0, 0.0)
-         ],
-     'green': [
-         (0.0,  1.0, 1.0),
-         (0.005,  1.0, 1.0),
-         (0.015,  0.0, 0.0),
-         (1.0,  0.0, 0.0)
-         ],
-     'blue':  [
-         (0.0,  1.0, 1.0),
-         (0.005,  1.0, 1.0),
-         (0.015,  0.0, 0.0),
-         (1.0,  1.0, 1.0)
-         ]
-     }
+OPT_K = 3
 
 
-def knn_predict(X_test):
-    fname = "pickles/y_pred.pickle"
-    if os.path.exists(fname):
-        print(f"{fname} exists")  # debug
-        y_pred = pickle.load(open(fname, "rb"))
-    else:
-        print(f"{fname} doesn't exist")  # debug
-        y_pred = knn.predict(X_test)
-        pickle.dump(y_pred, open(fname, "wb"))
-    return y_pred
+def distinguish_distances(distances, y_pred, y_test):  # correct or wrong
+    correct_dis = []
+    wrong_dis = []
+    for i, (p, t) in enumerate(zip(y_pred, y_test)):
+        if p == t:
+            correct_dis.append(distances[i])
+        else:
+            wrong_dis.append(distances[i])
+    return correct_dis, wrong_dis
 
 
-def prepare_disp(cfm, classes, cmap):
-    _, ax = plt.subplots(figsize=(13, 8))
-    """ same process
-    fig = plt.figure(figsize=(13, 8))
-    ax = fig.subplots()
-    #"""
-    disp = ConfusionMatrixDisplay(confusion_matrix=cfm, display_labels=classes)
-    disp.plot(cmap=cmap, ax=ax)
-
-
-def heatmap_for_cfm(cfm, classes, color_dict, is_show=False):
-    fname = "images/heatmap.png"
-    cmap = LinearSegmentedColormap("custom_cmap", color_dict)
-    prepare_disp(cfm, classes, cmap)
+def histogram_with_correct_wrong(correct_dis, wrong_dis, is_show=False):
+    fname = "images/histogram_cw.png"
+    longest = int(max(max(correct_dis), max(wrong_dis)))
+    bins = [i for i in range(0, longest, 100)]
+    _, axs = plt.subplots(2, 1, figsize=(8, 8))
+    axs[0].set_title("Correct distances")
+    axs[1].set_title("Wrong distances")
+    axs[0].hist(correct_dis, bins=bins, color="blue")
+    axs[1].hist(wrong_dis, bins=bins, color="red")
     plt.savefig(fname)
     if is_show:
         plt.show()
 
 
+def make_knn_nearest_distacnes(knn, X_test):
+    fname = "pickles/distances.pickle"
+    if os.path.exists(fname):
+        print(f"{fname} exists")  # debug
+        nearest_distances = pickle.load(open(fname, "rb"))
+    else:
+        print(f"{fname} doesn't exist")  # debug
+        nearest_distances = knn.kneighbors(X_test)
+        pickle.dump(three_distances, open(fname, "wb"))
+    return nearest_distances
+
+
 if __name__ == "__main__":
-    w()
     X, y = load_mnist()
-    print(w(cmt="load mnist"))
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=60000, shuffle=False)  # the mnist dataset have already shuffled
-    print(w(cmt="train split"))
     knn = learn_knn(X_train, y_train, OPT_K)
-    print(w(cmt="knn learn"))
+    nearest_distances = make_knn_nearest_distacnes(knn, X_test)[0]
+    distances = [d.mean() for d in three_distances]
     y_pred = knn_predict(X_test)
-    print(w(cmt="knn predict"))
-    cfm = confusion_matrix(y_test, y_pred, normalize="true")
-    print(w(cmt="make cfm"))
-    print("cfm", cfm)  # debug
-    classes = knn.classes_
-    heatmap_for_cfm(cfm, classes, color_dict, is_show=True)
+    correct_dis, wrong_dis = distinguish_distances(distances, y_pred, y_test)
+    # print("len(correct_dis), len(wrong_dis)", len(correct_dis), len(wrong_dis))  # debug
+    histogram_with_correct_wrong(correct_dis, wrong_dis, is_show=True)
