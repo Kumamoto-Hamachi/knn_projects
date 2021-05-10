@@ -2,7 +2,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 from mnist import load_mnist
-from knn import learn_knn
+from knn import learn_knn, knn_predict
 from util.simple_watch import watch_as_str as w
 import os
 import pickle
@@ -32,18 +32,6 @@ color_dict = {
          (1.0,  1.0, 1.0)
          ]
      }
-
-
-def knn_predict(X_test):
-    fname = "pickles/y_pred.pickle"
-    if os.path.exists(fname):
-        print(f"{fname} exists")  # debug
-        y_pred = pickle.load(open(fname, "rb"))
-    else:
-        print(f"{fname} doesn't exist")  # debug
-        y_pred = knn.predict(X_test)
-        pickle.dump(y_pred, open(fname, "wb"))
-    return y_pred
 
 
 def prepare_disp(cfm, classes, cmap):
