@@ -9,7 +9,7 @@ import pickle
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.pyplot as plt
 
-OPT_K=3  # this num is calced by knn.py
+OPT_K = 3  # this num is calced by knn.py
 
 color_dict = {
      'red':   [
@@ -33,6 +33,7 @@ color_dict = {
          ]
      }
 
+
 def knn_predict(X_test):
     fname = "pickles/y_pred.pickle"
     if os.path.exists(fname):
@@ -44,6 +45,24 @@ def knn_predict(X_test):
         pickle.dump(y_pred, open(fname, "wb"))
     return y_pred
 
+
+def prepare_disp(cfm, classes, cmap):
+    _, ax = plt.subplots(figsize=(13, 8))
+    """ same process
+    fig = plt.figure(figsize=(13, 8))
+    ax = fig.subplots()
+    #"""
+    disp = ConfusionMatrixDisplay(confusion_matrix=cfm, display_labels=classes)
+    disp.plot(cmap=cmap, ax=ax)
+
+
+def heatmap_for_cfm(cfm, classes, color_dict, is_show=False):
+    fname = "images/heatmap.png"
+    cmap = LinearSegmentedColormap("custom_cmap", color_dict)
+    prepare_disp(cfm, classes, cmap)
+    plt.savefig(fname)
+    if is_show:
+        plt.show()
 
 
 if __name__ == "__main__":
@@ -59,12 +78,5 @@ if __name__ == "__main__":
     cfm = confusion_matrix(y_test, y_pred, normalize="true")
     print(w(cmt="make cfm"))
     print("cfm", cfm)  # debug
-    cmap = LinearSegmentedColormap("custom_cmap", color_dict)
-    _, ax = plt.subplots(figsize=(13, 8))
-    """ same process
-    fig = plt.figure(figsize=(8, 6))
-    ax = fig.subplots()
-    #"""
-    disp = ConfusionMatrixDisplay(confusion_matrix=cfm, display_labels=knn.classes_)
-    disp.plot(cmap=cmap, ax=ax)
-    plt.show()
+    classes = knn.classes_
+    heatmap_for_cfm(cfm, classes, color_dict, is_show=True)
