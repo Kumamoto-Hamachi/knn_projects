@@ -3,3 +3,4 @@ exec.sh
 *.pickle
 memo.txt
 __pycache__
+images/
