@@ -53,6 +53,17 @@ def learn_knn(X, y, k):
     return knn
 
 
+def knn_predict(X_test):
+    fname = "pickles/y_pred.pickle"
+    if os.path.exists(fname):
+        print(f"{fname} exists")  # debug
+        y_pred = pickle.load(open(fname, "rb"))
+    else:
+        print(f"{fname} doesn't exist")  # debug
+        y_pred = knn.predict(X_test)
+        pickle.dump(y_pred, open(fname, "wb"))
+    return y_pred
+
 
 if __name__ == "__main__":
     X, y = load_mnist()
