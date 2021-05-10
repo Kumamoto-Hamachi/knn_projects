@@ -37,19 +37,19 @@ def make_knn_nearest_distacnes(knn, X_test):
     fname = "pickles/distances.pickle"
     if os.path.exists(fname):
         print(f"{fname} exists")  # debug
-        nearest_distances = pickle.load(open(fname, "rb"))
+        neigh_dist = pickle.load(open(fname, "rb"))
     else:
         print(f"{fname} doesn't exist")  # debug
-        nearest_distances = knn.kneighbors(X_test)
+        neigh_dist = knn.kneighbors(X_test)
         pickle.dump(three_distances, open(fname, "wb"))
-    return nearest_distances
+    return neigh_dist
 
 
 if __name__ == "__main__":
     X, y = load_mnist()
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=60000, shuffle=False)  # the mnist dataset have already shuffled
     knn = learn_knn(X_train, y_train, OPT_K)
-    nearest_distances = make_knn_nearest_distacnes(knn, X_test)[0]
+    neigh_dist = make_knn_nearest_distacnes(knn, X_test)[0]
     distances = [d.mean() for d in three_distances]
     y_pred = knn_predict(X_test)
     correct_dis, wrong_dis = distinguish_distances(distances, y_pred, y_test)
