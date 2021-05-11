@@ -1,57 +1,48 @@
 from sklearn.model_selection import train_test_split
+
 from mnist import load_mnist
 from knn import learn_knn, knn_predict
+from util.simple_watch import watch_as_str as w
 import pickle
-import os
 import matplotlib.pyplot as plt
 
 OPT_K = 3
+"""
+7-1 2.0%
+4-9 1.9%
+8-3 1.6%
+"""
 
-
-def distinguish_distances(distances, y_pred, y_test):  # correct or wrong
-    correct_dis = []
-    wrong_dis = []
-    for i, (p, t) in enumerate(zip(y_pred, y_test)):
-        if p == t:
-            correct_dis.append(distances[i])
+#TODO 7-1, 4-9, 8-3それぞれのindicesをだせ => まさかハードコーディングしないだろうな？
+def divide_specified_indices(y_pred, y_test):  # starts at 60000
+    correct_indices = []
+    wrong_indices = []
+    for i, (pred, ans) in enumerate(zip(y_pred, y_test)):
+        if pred == ans:
+            correct_indices.append(i)
         else:
-            wrong_dis.append(distances[i])
-    return correct_dis, wrong_dis
+            wrong_indices.append(i)
+    return correct_indices, wrong_indices
 
 
-def histogram_with_correct_wrong(correct_dis, wrong_dis, is_show=False):
-    fname = "images/histogram_cw.png"
-    longest = int(max(max(correct_dis), max(wrong_dis)))
-    bins = [i for i in range(0, longest, 100)]
-    _, axs = plt.subplots(2, 1, figsize=(8, 8))
-    axs[0].set_title("Correct distances")
-    axs[1].set_title("Wrong distances")
-    axs[0].hist(correct_dis, bins=bins, color="blue")
-    axs[1].hist(wrong_dis, bins=bins, color="red")
-    plt.savefig(fname)
-    if is_show:
-        plt.show()
-
-
-def make_knn_nearest_distacnes(knn, X_test):
-    fname = "pickles/distances.pickle"
-    if os.path.exists(fname):
-        print(f"{fname} exists")  # debug
-        nearest_distances = pickle.load(open(fname, "rb"))
-    else:
-        print(f"{fname} doesn't exist")  # debug
-        nearest_distances = knn.kneighbors(X_test)
-        pickle.dump(three_distances, open(fname, "wb"))
-    return nearest_distances
+# TODO
+def save_X_image(X, indices):  # 関数で実験しろよ。
+    filename = "images/"
+    for i in indices:
+        #TODO to_numpyで書き直すこと
+        plt.imshow(X_test.values[i].reshape(28, 28), cmap="gray")
+        plt.savefig(filename)
+        break
 
 
 if __name__ == "__main__":
     X, y = load_mnist()
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=60000, shuffle=False)  # the mnist dataset have already shuffled
     knn = learn_knn(X_train, y_train, OPT_K)
-    nearest_distances = make_knn_nearest_distacnes(knn, X_test)[0]
-    distances = [d.mean() for d in three_distances]
     y_pred = knn_predict(X_test)
-    correct_dis, wrong_dis = distinguish_distances(distances, y_pred, y_test)
-    # print("len(correct_dis), len(wrong_dis)", len(correct_dis), len(wrong_dis))  # debug
-    histogram_with_correct_wrong(correct_dis, wrong_dis, is_show=True)
+    correct_indices, wrong_indices = divide_specified_indices(y_pred, y_test)
+    #print("X_test", X_test.values[0].reshape(28, 28))  # debug
+    # TEST start
+    plt.imshow(X_test.values[0].reshape(28, 28), cmap="gray")  #TODO ハードコーディング直せ
+    plt.show()
+    # TEST end
