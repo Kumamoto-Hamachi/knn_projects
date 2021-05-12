@@ -21,7 +21,7 @@ THRESHOLD_RATE = 0.015  # This num represents the rate of each labels
 def save_X_image(X, indices, base_dir):
     for i in indices:
         filename = base_dir + str(i)
-        plt.imshow(X_test.to_numpy()[i].reshape(28, 28), cmap=plt.cm.gray_r)
+        plt.imshow(X.to_numpy()[i].reshape(28, 28), cmap=plt.cm.gray_r)
         plt.savefig(filename)
 
 
@@ -36,5 +36,5 @@ if __name__ == "__main__":
     for com, indices in frequent_combs.items():
         base_dir = f"images/{com}/"
         os.mkdir(base_dir)
-        save_X_image(X, indices, base_dir)
+        save_X_image(X_test, indices, base_dir)
         print(w(base_dir))
