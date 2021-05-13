@@ -51,7 +51,7 @@ if __name__ == "__main__":
     knn = learn_knn(X_train, y_train, OPT_K)
     neigh_indices = make_knn_nearest_distacnes(knn, X_test)[0]
     distances = [d.mean() for d in neigh_indices]
-    y_pred = knn_predict(X_train, y_train, OPT_K, X_test)
+    y_pred = knn_predict(knn, X_test)
     correct_dis, wrong_dis = distinguish_distances(distances, y_pred, y_test)
     # print("len(correct_dis), len(wrong_dis)", len(correct_dis), len(wrong_dis))  # debug
     histogram_with_correct_wrong(correct_dis, wrong_dis, is_show=True)
