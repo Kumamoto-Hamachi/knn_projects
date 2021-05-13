@@ -53,15 +53,14 @@ def learn_knn(X, y, k):
     return knn
 
 
-def knn_predict(X_train, y_train, opt_k, X_test):
+def knn_predict(learned_knn, X_test):
     fname = "pickles/y_pred.pickle"
     if os.path.exists(fname):
         print(f"{fname} exists")  # debug
         y_pred = pickle.load(open(fname, "rb"))
     else:
         print(f"{fname} doesn't exist")  # debug
-        knn = learn_knn(X_train, y_train, opt_k)
-        y_pred = knn.predict(X_test)
+        y_pred = learned_knn.predict(X_test)
         pickle.dump(y_pred, open(fname, "wb"))
     return y_pred
 

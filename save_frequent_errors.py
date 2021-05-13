@@ -29,7 +29,7 @@ if __name__ == "__main__":
     X, y = load_mnist()
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=60000, shuffle=False)  # the mnist dataset have already shuffled
     knn = learn_knn(X_train, y_train, OPT_K)
-    y_pred = knn_predict(X_train, y_train, OPT_K, X_test)
+    y_pred = knn_predict(knn, X_test)
     frequent_combs = identify_frequent_combinations(y_pred, y_test, THRESHOLD_RATE)
     print("frequent_combs", frequent_combs)  # debug
     print(w("prepared,,,"))

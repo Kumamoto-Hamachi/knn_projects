@@ -61,7 +61,7 @@ if __name__ == "__main__":
     print(w(cmt="train split"))
     knn = learn_knn(X_train, y_train, OPT_K)
     print(w(cmt="knn learn"))
-    y_pred = knn_predict(X_train, y_train, OPT_K, X_test)
+    y_pred = knn_predict(knn, X_test)
     print(w(cmt="knn predict"))
     cfm = confusion_matrix(y_test, y_pred, normalize="true")
     print(w(cmt="make cfm"))
