@@ -4,7 +4,6 @@ from PIL import Image, ImageDraw, ImageFont
 import matplotlib.pyplot as plt
 import math
 import os
-import sys
 
 from divide import identify_frequent_combinations
 from knn import learn_knn, knn_predict
@@ -15,17 +14,17 @@ THRESHOLD_RATE = 0.015
 TRAIN_SIZE = 60000
 
 
-def save_test_and_neighs_imgs(indices, img_dir, X, y, pred_for_test):
-    print("img_dir", img_dir)  # debug
+def save_test_and_neighs_img(indices, img_dir, X, y, pred_for_test):
     img_list = [None] * len(indices)
+    test_and_neighs_img_name = f"{str(indices[0])}_quad"  # first idx is test and
     for order, idx in enumerate(indices):
         filename = img_dir + str(idx) + ".png"
         plt.imshow(X.to_numpy()[idx].reshape(28, 28), cmap=plt.cm.gray_r)
         plt.savefig(filename)
-        pred = pred_for_test if order == 0 else None  # first is test so shold add pred
-        img_list[order] = prepare_img(idx, filename, y, pred=pred)  #TODO
-    concatenated_img = cocat_img_list_horizontally(img_list)
-    concatenated_img.save(f"{img_dir}/{str(indices[0])}_quad.png")  #TODO
+        pred = pred_for_test if order == 0 else None  # first is test so shold add pred-label
+        img_list[order] = prepare_img(idx, filename, y, pred=pred)
+    concatenated_img = concat_imgs_horizontally(img_list)
+    concatenated_img.save(f"{img_dir}/{test_and_neighs_img_name}.png")
 
 
 def prepare_img(idx, filename, y, pred=None):
@@ -42,7 +41,7 @@ def prepare_img(idx, filename, y, pred=None):
     return img
 
 
-def cocat_img_list_horizontally(img_list):
+def concat_imgs_horizontally(img_list):
     min_width = math.inf
     max_height = 0
     sum_width = 0
@@ -74,29 +73,8 @@ if __name__ == "__main__":
         for test_idx in test_indices:
             idx = test_idx + TRAIN_SIZE  # idx is X's index(before divided X_train from X_test)
             img_dir = f"{base_dir}{str(idx)}/"
+            #print("img_dir", img_dir)  # debug
             os.mkdir(img_dir)
             indices = [idx] + list(neigh_idx_list[test_idx])  # neigh_idx_list uses test_idx yet
             #print("indices", indices)  # debug
-            save_test_and_neighs_imgs(indices, img_dir, X, y, pred_for_test)
-            #sys.exit()  #TODO
-
-
-"""
-(1)data-set
-テストデータ
-トレーニングデータ
-
-(2)process
-KNNの学習-
-KNNによるラベル予測-
-予測ラベルと実際のラベル比較-
-頻出ラベルに対応するneighbor(トレーニングデータ)のindexを取得-
-頻出ラベル、そのneighbor、それぞれに対応する画像の保存
-上記の4枚の画像の連結(順番通りになるように、それぞれのlabelとorderも載せる)
-
-
-テストデータ保存
-ネイバーデータ保存
-1枚にまとめて(テストにはpredをつける,全てにlabelとorderをつける)保存
-pandas勉強しよう
-"""
+            save_test_and_neighs_img(indices, img_dir, X, y, pred_for_test)
