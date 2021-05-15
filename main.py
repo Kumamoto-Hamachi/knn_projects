@@ -11,6 +11,8 @@ from histogram import make_knn_nearest_distacnes
 
 OPT_K = 3
 THRESHOLD_RATE = 0.015
+TRAIN_SIZE = 60000
+TRAIN_END_ORDER = TRAIN_SIZE - 1
 
 
 def save_test_and_neighs_imgs(test_idx, neighs_idx, img_dir, X_train, X_test):
@@ -69,7 +71,7 @@ def cocat_img_list_horizontally(img_list):
 
 if __name__ == "__main__":
     X, y = load_mnist()
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=60000, shuffle=False)  # the mnist dataset have already shuffled
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TRAIN_SIZE, shuffle=False)  # the mnist dataset have already shuffled
     knn = learn_knn(X_train, y_train, OPT_K)
     y_pred = knn_predict(knn, X_test)
     frequent_combs = identify_frequent_combinations(y_pred, y_test, THRESHOLD_RATE)
