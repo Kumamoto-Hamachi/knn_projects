@@ -1,9 +1,10 @@
 from sklearn.model_selection import train_test_split
-from mnist import load_mnist
-from knn import learn_knn, knn_predict
 import pickle
 import os
 import matplotlib.pyplot as plt
+
+from mnist import load_mnist
+from knn import learn_knn, knn_predict
 
 OPT_K = 3
 
