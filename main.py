@@ -96,7 +96,7 @@ if __name__ == "__main__":
             save_test_and_neighs_img(indices, img_dir, X, y, pred_for_test)
 
     # 3 Shulled MNIST classfication by using KNN
-    shuffle_order = prepare_shuffle_order(1, 784):  # 28 * 28 = 784
+    shuffle_order = prepare_shuffle_order(1, 784)  # 28 * 28 = 784
     X_train = shuffle_pixcel(X_train, shuffle_order)
     X_test = shuffle_pixcel(X_test, shuffle_order)
     knn = learn_knn(X_train, y_train, opt_k, is_refresh=True)  # knn must learn shuffled data-set again
