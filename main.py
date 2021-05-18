@@ -91,3 +91,4 @@ if __name__ == "__main__":
     score = knn.score(X_test, y_test)
     print(w("scoring: "))
     print("score", score)  # debug
+import os
