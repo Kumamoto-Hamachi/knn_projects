@@ -12,10 +12,12 @@ Pillow==8.2.0
 # 前提知識
 ## K nearest neighbors
 K nearest neighbors(以下、KNNと呼ぶ)はテストデータが入力されたときにそれに近いk個のトレーニングデータを取り、それらのラベルの多数決を採ることで、テストデータのラベルを予測するモデルである。
-## MNIST
+## [MNIST](http://yann.lecun.com/exdb/mnist/)
+
 <img width="915" alt="mnist_samples" src="https://user-images.githubusercontent.com/51290155/118697387-31f28480-b84a-11eb-8639-22deab9bef91.png">
-[MNIST](http://yann.lecun.com/exdb/mnist/)(Modified National Institute of Standards)は0~9の手書き数字の画像データセットだ。データセットには60,000枚のトレーニングデータと10,000枚のテストデータが含まれている。
-MNIST分類を行うために元となるデータは[OpenMLのmnist_784](https://www.openml.org/d/554)から取得した。
+
+MNIST(Modified National Institute of Standards)は0~9の手書き数字の画像データセットだ。データセットには60,000枚のトレーニングデータと10,000枚のテストデータが含まれている。
+MNIST分類を行うために元となるデータは、[OpenMLのmnist_784](https://www.openml.org/d/554)から取得した。
 
 # 1. KNNを用いたMNIST分類
 MNISTのテストデータセットのそれぞれの手書き数字画像データのラベル(0~9)をKNNを用いて予測した。
@@ -51,8 +53,10 @@ MNIST分類の際に生じたエラー(誤ったラベル予測)の分析のた�
 ラベル推測を誤ったデータにはどんな特徴があるのかを探るために、混同行列(Confusion Matrix)を用いて確認する。またデータ数の大小を視覚的に確認するために、混合行列をヒートマップ化した。
 
 ![heatmap](https://user-images.githubusercontent.com/51290155/118698600-906c3280-b84b-11eb-93c0-f30a64975715.png)
+
 「正解ラベル-予測ラベル」のうち上記の混合行列で0.015以上となるのうち「7-1」、「4-9」、「8-3」の組み合わせを頻出エラーと呼ぶことにする。
 次は頻出エラー及びそのneighborの画像3枚を確認する。
+
 ![4-9](https://user-images.githubusercontent.com/51290155/118698917-ec36bb80-b84b-11eb-94d8-baa08f85a135.png)
 ![7-1](https://user-images.githubusercontent.com/51290155/118698934-efca4280-b84b-11eb-8e43-34da5b035b32.png)
 ![8-3](https://user-images.githubusercontent.com/51290155/118698937-f062d900-b84b-11eb-963a-beb1769ab4b8.png)
@@ -62,7 +66,7 @@ MNIST分類の際に生じたエラー(誤ったラベル予測)の分析のた�
 TODO
 一般的に画像データ(ここでバラバラの画像データ出す)は人間の目で見て(正解の)判断がつくものであるべきだ。
 <img width="709" alt="row_shuffle" src="https://user-images.githubusercontent.com/51290155/118699135-2607c200-b84c-11eb-8172-243ac22808c2.png">
-※右は左側の画像のピクセルをシャッフルしたもの
+*右は左側の画像のピクセルをシャッフルしたもの
 
 しかし、本記事で行なってきたモデルの学習/予測のアルゴリズムではピクセルの光度を(全て同じ規則で)シャッフルしてもスコアの精度に影響が出ることはない。
 ※実際に一定の規則に基づいてシャッフルしたデータを学習/予測に用いた結果、正答率はシャッフルする前と同じく97.05%となった。
