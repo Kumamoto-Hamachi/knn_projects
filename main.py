@@ -7,6 +7,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 import numpy as np
 import random
+import pandas as pd
 
 from mnist import load_mnist
 from knn import learn_knn, optimize, knn_predict
@@ -23,18 +24,24 @@ OPT_K = 3
 THRESHOLD_RATE = 0.015
 
 
+def pixel_shuffle(dataset):
+    for i, data in enumerate(dataset):
+        np.random.shuffle(dataset)
+        if i == 10:
+            break
+    print(w("shuffle: "))
 
 
 if __name__ == "__main__":
     # 1. MNIST classfication by using KNN
-    print(w("start"))
+    print(w("start: "))
     X, y = load_mnist()
     print(w("load: "))
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TRAIN_SIZE, shuffle=False)  # the mnist dataset have already shuffled
     #opt_k = optimize(X_train, y_train)  # opt_k is 3 in this case
     print(w("split: "))
     opt_k = OPT_K
-    knn = learn_knn(X_train, y_train, opt_k)
+    knn = learn_knn(X_train, y_train, opt_k, is_refresh=True)
     print(w("learn: "))
     score = knn.score(X_test, y_test)
     print(w("scoring: "))
@@ -72,7 +79,15 @@ if __name__ == "__main__":
             save_test_and_neighs_img(indices, img_dir, X, y, pred_for_test)
 
     # 3 Shulled MNIST classfication by using KNN
-    # ここでシャッフル
-    #knn = learn_knn(X_train, y_train, opt_k)
-    #score = knn.score(X_test, y_test)
-    #print("score", score)  # debug
+    print(w("start2: "))
+    np.random.seed(1)
+    random_list = np.arange(784)  # 28*28
+    np.random.shuffle(random_list)
+    X_train = X_train.to_numpy()[:, random_list]
+    X_test = X_test.to_numpy()[:, random_list]
+    print(w("shuffle: "))
+    knn = learn_knn(X_train, y_train, opt_k, is_refresh=True)  # knn must learn shuffled data-set again
+    print(w("learn: "))
+    score = knn.score(X_test, y_test)
+    print(w("scoring: "))
+    print("score", score)  # debug
