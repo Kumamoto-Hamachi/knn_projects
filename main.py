@@ -39,28 +39,29 @@ color_dict = {
          ]
      }
 
+def prepare_shuffle_order(seed, orders):
+    np.random.seed(seed)
+    shuffle_order = np.arange(orders)
+    np.random.shuffle(shuffle_order)
+    return shuffle_order  # numpy.ndarray
 
-def pixel_shuffle(dataset):
-    for i, data in enumerate(dataset):
-        np.random.shuffle(dataset)
-        if i == 10:
-            break
-    print(w("shuffle: "))
+def shuffle_pixcel(dataframe, shuffle_order):
+    shuffled_array = dataframe.to_numpy()[:, shuffle_order]
+    """ Preparing for the future in case that dataframe is needed
+    pixel_list = [f"pixel{i}" for i in range(1, len(shuffle_order))]
+    dataframe = pd.DataFrame(data=X_train, columns=pixel_list)
+    """
+    return shuffled_array  # numpy.ndarray
 
 
 if __name__ == "__main__":
     # 1. MNIST classfication by using KNN
-    print(w("start: "))
     X, y = load_mnist()
-    print(w("load: "))
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=TRAIN_SIZE, shuffle=False)  # the mnist dataset have already shuffled
     #opt_k = optimize(X_train, y_train)  # opt_k is 3 in this case
-    print(w("split: "))
     opt_k = OPT_K
     knn = learn_knn(X_train, y_train, opt_k, is_refresh=True)
-    print(w("learn: "))
     score = knn.score(X_test, y_test)
-    print(w("scoring: "))
     print("score", score)  # debug
 
     # 2. Error analysis
@@ -95,16 +96,9 @@ if __name__ == "__main__":
             save_test_and_neighs_img(indices, img_dir, X, y, pred_for_test)
 
     # 3 Shulled MNIST classfication by using KNN
-    print(w("start2: "))
-    np.random.seed(1)
-    random_list = np.arange(784)  # 28*28
-    np.random.shuffle(random_list)
-    X_train = X_train.to_numpy()[:, random_list]
-    X_test = X_test.to_numpy()[:, random_list]
-    print(w("shuffle: "))
+    shuffle_order = prepare_shuffle_order(1, 784):  # 28 * 28 = 784
+    X_train = shuffle_pixcel(X_train, shuffle_order)
+    X_test = shuffle_pixcel(X_test, shuffle_order)
     knn = learn_knn(X_train, y_train, opt_k, is_refresh=True)  # knn must learn shuffled data-set again
-    print(w("learn: "))
     score = knn.score(X_test, y_test)
-    print(w("scoring: "))
     print("score", score)  # debug
-import os
