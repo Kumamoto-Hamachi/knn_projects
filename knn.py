@@ -34,9 +34,9 @@ def optimize(X, y):
     return opt_k
 
 
-def learn_knn(X, y, k):
+def learn_knn(X, y, k, is_refresh=False):
     fname = "pickles/knn.pickle"
-    if os.path.exists(fname):
+    if os.path.exists(fname) and not is_refresh:
         print(f"{fname} exists")  # debug
         knn = pickle.load(open(fname, "rb"))
     else:
