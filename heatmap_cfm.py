@@ -51,20 +51,3 @@ def heatmap_for_cfm(cfm, classes, color_dict, is_show=False):
     plt.savefig(fname)
     if is_show:
         plt.show()
-
-
-if __name__ == "__main__":
-    w()
-    X, y = load_mnist()
-    print(w(cmt="load mnist"))
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=60000, shuffle=False)  # the mnist dataset have already shuffled
-    print(w(cmt="train split"))
-    knn = learn_knn(X_train, y_train, OPT_K)
-    print(w(cmt="knn learn"))
-    y_pred = knn_predict(knn, X_test)
-    print(w(cmt="knn predict"))
-    cfm = confusion_matrix(y_test, y_pred, normalize="true")
-    print(w(cmt="make cfm"))
-    print("cfm", cfm)  # debug
-    classes = knn.classes_
-    heatmap_for_cfm(cfm, classes, color_dict, is_show=True)
