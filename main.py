@@ -1,6 +1,7 @@
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 import numpy as np
+import os
 
 from mnist import load_mnist
 from knn import learn_knn, optimize, knn_predict
@@ -10,11 +11,33 @@ from histogram import (make_knn_nearest_distacnes,
 from heatmap_cfm import heatmap_for_cfm
 from divide import identify_frequent_combinations
 from frequent_error_com import save_test_and_neighs_img
-from util.simple_watch import watch_as_str as w
+#from util.simple_watch import watch_as_str as w
 
 TRAIN_SIZE = 60000
 OPT_K = 3
 THRESHOLD_RATE = 0.015
+
+color_dict = {
+     'red':   [
+         (0.0,  1.0, 1.0),
+         (0.01,  0.9, 0.9),
+         (0.02,  1.0, 1.0),
+         (0.5,  1.0, 1.0),
+         (1.0,  0.0, 0.0)
+         ],
+     'green': [
+         (0.0,  1.0, 1.0),
+         (0.005,  1.0, 1.0),
+         (0.015,  0.0, 0.0),
+         (1.0,  0.0, 0.0)
+         ],
+     'blue':  [
+         (0.0,  1.0, 1.0),
+         (0.005,  1.0, 1.0),
+         (0.015,  0.0, 0.0),
+         (1.0,  1.0, 1.0)
+         ]
+     }
 
 
 def pixel_shuffle(dataset):
