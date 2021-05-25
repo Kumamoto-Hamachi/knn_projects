@@ -40,7 +40,7 @@ def histogram_with_correct_wrong(correct_dis, wrong_dis, is_show=False):
 def make_knn_nearest_distacnes(knn, X_test):
     base_dir = "pickles"
     md.make_dir(base_dir)
-    fname = f"base_dir/distances.pickle"
+    fname = f"{base_dir}/distances.pickle"
     if os.path.exists(fname):
         print(f"{fname} exists")  # debug
         neigh_dist_and_indices = pickle.load(open(fname, "rb"))
