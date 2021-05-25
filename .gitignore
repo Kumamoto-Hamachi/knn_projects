@@ -4,3 +4,4 @@ memo.txt
 __pycache__
 images/
 for_bug_fix/
+.DS_Store
