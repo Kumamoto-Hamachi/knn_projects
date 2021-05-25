@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from mnist import load_mnist
 from knn import learn_knn, knn_predict
-import make_dir
+import make_dir as md
 
 OPT_K = 3
 
@@ -23,7 +23,7 @@ def distinguish_distances(distances, y_pred, y_test):  # correct or wrong
 
 def histogram_with_correct_wrong(correct_dis, wrong_dis, is_show=False):
     base_dir = "images"
-    make_dir(base_dir)
+    md.make_dir(base_dir)
     fname = f"{base_dir}/histogram_cw.png"
     longest = int(max(max(correct_dis), max(wrong_dis)))
     bins = [i for i in range(0, longest, 100)]
@@ -39,7 +39,7 @@ def histogram_with_correct_wrong(correct_dis, wrong_dis, is_show=False):
 
 def make_knn_nearest_distacnes(knn, X_test):
     base_dir = "pickles"
-    make_dir(base_dir)
+    md.make_dir(base_dir)
     fname = f"base_dir/distances.pickle"
     if os.path.exists(fname):
         print(f"{fname} exists")  # debug

@@ -8,7 +8,7 @@ import os
 import pickle
 from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.pyplot as plt
-import make_dir
+import make_dir as md
 
 OPT_K = 3  # this num is calced by knn.py
 
@@ -47,7 +47,7 @@ def prepare_disp(cfm, classes, cmap):
 
 def heatmap_for_cfm(cfm, classes, color_dict, is_show=False):
     base_dir = "images"
-    make_dir(base_dir)
+    md.make_dir(base_dir)
     fname = f"{base_dir}/heatmap.png"
     cmap = LinearSegmentedColormap("custom_cmap", color_dict)
     prepare_disp(cfm, classes, cmap)

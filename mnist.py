@@ -1,12 +1,12 @@
 from sklearn.datasets import fetch_openml
 import pickle
 import os
-import make_dir
+import make_dir as md
 
 
 def load_mnist():
     base_dir = "pickles"
-    make_dir(base_dir)
+    md.make_dir(base_dir)
     fname = f"{base_dir}/mnist.pickle"
     if os.path.exists(fname):
         print(f"{fname} exists")  # debug
